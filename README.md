@@ -1,1 +1,1 @@
-wip
+A program that gets the derivative of any function at a specific point, utilizing dual numbers, a complex set of numbers of the form $a + b\varepsilon$ where $\varepsilon^2 = 0$ but $\varepsilon \neq 0$.
