@@ -1,5 +1,6 @@
 use crate::{dual::DualComp, error::Error};
 
+#[derive(Debug)]
 pub enum Token<T: DualComp> {
     Number(T),
 
@@ -31,17 +32,38 @@ impl Lexer {
         let mut tokens = vec![];
 
         while let Some(c) = self.current() {
-            if let Some(t) = self.read_token(*c)? {
-                tokens.push(t);
+            if c.is_whitespace() {
+                continue;
             }
+
+            tokens.push(self.read_token(*c)?);
         }
 
         Ok(tokens)
     }
 
-    fn read_token<T: DualComp>(&mut self, c: char) -> Result<Option<Token<T>>, Error> {
+    fn read_token<T: DualComp>(&mut self, c: char) -> Result<Token<T>, Error> {
         match c {
-            c if c.is_whitespace() => Ok(None),
+            c if c.is_numeric() => {
+                let mut s = String::new();
+                s.push(c);
+                self.advance();
+
+                while let Some(&c) = self.current() {
+                    self.advance();
+
+                    if c.is_numeric() || c == '.' {
+                        s.push(c);
+                    } else {
+                        break;
+                    }
+                }
+
+                match s.parse::<T>() {
+                    Ok(f) => Ok(Token::Number(f)),
+                    Err(_) => Err(Error::SyntaxError),
+                }
+            }
             _ => todo!()
         }
     }

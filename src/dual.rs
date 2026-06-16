@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::{fmt::Display, ops::{Add, Div, Mul, Sub}, str::FromStr};
 
 use num::Float;
 
@@ -7,8 +7,8 @@ pub struct Dual<T: Float> {
     dual: T,
 }
 
-pub trait DualComp: Float + Default {}
-impl<T: Float + Default> DualComp for T {}
+pub trait DualComp: Float + Default + Display + FromStr {}
+impl<T: Float + Default + Display + FromStr> DualComp for T {}
 
 impl<T: DualComp> Dual<T> {
     pub fn new(real: T, dual: T) -> Dual<T> {
@@ -65,5 +65,11 @@ impl<T: DualComp> Div for Dual<T> {
             real: self.real / rhs.real,
             dual: (self.dual * rhs.real - self.real * rhs.dual) / (rhs.dual * rhs.dual),
         }
+    }
+}
+
+impl<T: DualComp> Display for Dual<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} + {}\u{03B5}", self.real, self.dual)
     }
 }
