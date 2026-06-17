@@ -5,6 +5,7 @@ use crate::{dual::Dual, lexer::Lexer};
 mod dual;
 mod lexer;
 mod error;
+mod parser;
 
 fn main() {
     let input = get_input();
