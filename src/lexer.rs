@@ -9,8 +9,8 @@ pub enum Token<T: DualComp> {
     Mul,
     Div,
 
-    LBrace,
-    RBrace,
+    LBracket,
+    RBracket,
 
     X,
 }
@@ -33,10 +33,12 @@ impl Lexer {
 
         while let Some(c) = self.current() {
             if c.is_whitespace() {
+                self.advance();
                 continue;
             }
 
             tokens.push(self.read_token(*c)?);
+            self.advance();
         }
 
         Ok(tokens)
@@ -44,15 +46,21 @@ impl Lexer {
 
     fn read_token<T: DualComp>(&mut self, c: char) -> Result<Token<T>, Error> {
         match c {
+            '+' => Ok(Token::Add),
+            '-' => Ok(Token::Sub),
+            '*' => Ok(Token::Mul),
+            '/' => Ok(Token::Div),
+            '(' => Ok(Token::LBracket),
+            ')' => Ok(Token::RBracket),
+            'x' => Ok(Token::X),
+
             c if c.is_numeric() => {
                 let mut s = String::new();
                 s.push(c);
-                self.advance();
 
-                while let Some(&c) = self.current() {
-                    self.advance();
-
+                while let Some(&c) = self.peek() {
                     if c.is_numeric() || c == '.' {
+                        self.advance();
                         s.push(c);
                     } else {
                         break;
@@ -63,8 +71,9 @@ impl Lexer {
                     Ok(f) => Ok(Token::Number(f)),
                     Err(_) => Err(Error::SyntaxError),
                 }
-            }
-            _ => todo!()
+            },
+
+            _ => Err(Error::UnknownChar),
         }
     }
 
@@ -74,5 +83,9 @@ impl Lexer {
 
     fn current(&self) -> Option<&char> {
         self.input.get(self.pos)
+    }
+
+    fn peek(&self) -> Option<&char> {
+        self.input.get(self.pos + 1)
     }
 }

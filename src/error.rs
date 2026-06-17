@@ -4,6 +4,7 @@ use std::fmt::Display;
 pub enum Error {
     SyntaxError,
     MathError,
+    UnknownChar,
 }
 
 impl Display for Error {
@@ -11,6 +12,7 @@ impl Display for Error {
         match self {
             Error::MathError => write!(f, "Math Error"),
             Error::SyntaxError => write!(f, "Syntax Error"),
+            Error::UnknownChar => write!(f, "Unknown Character"),
         }
     }
 }
