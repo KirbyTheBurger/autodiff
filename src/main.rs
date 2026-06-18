@@ -1,5 +1,7 @@
 use std::io::stdin;
 
+use clap::Parser as CliParser;
+
 use crate::{evaluator::Evaluator, lexer::Lexer, parser::Parser};
 
 mod dual;
@@ -8,7 +10,18 @@ mod error;
 mod parser;
 mod evaluator;
 
+#[derive(CliParser)]
+#[command(name = "autodiff", about = "Differentiates a function using dual numbers")]
+struct Args {
+    // Print debug info
+    #[arg(short, long)]
+    debug: bool,
+}
+
 fn main() {
+    let args = Args::parse();
+
+    println!("Enter your function:");
     let input = get_input();
 
     let mut lexer = Lexer::new(input.chars().collect());
@@ -19,7 +32,10 @@ fn main() {
             return;
         },
     };
-    println!("{:?}", tokens);
+
+    if args.debug {
+        println!("Tokens: {:?}", tokens);
+    }
 
     let mut parser = Parser::new(tokens);
     let expr = match parser.parse() {
@@ -29,8 +45,12 @@ fn main() {
             return;
         },
     };
-    println!("{:?}", expr);
+    
+    if args.debug {
+        println!("Expression: {:?}", expr);
+    }
 
+    println!("Enter the x position of the derivative you want:");
     let pos;
     loop {
         match get_input().parse::<f64>() {
@@ -38,7 +58,7 @@ fn main() {
                 pos = n;
                 break;
             },
-            Err(e) => println!("failed to parse number: {e}"),
+            Err(e) => println!("Failed to parse number: {e}. Please enter the position again"),
         }
     }
 
