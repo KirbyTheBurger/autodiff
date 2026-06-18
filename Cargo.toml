@@ -1,5 +1,5 @@
 [package]
-name = "autodiff"
+name = "autodifferentiate"
 version = "0.1.0"
 edition = "2024"
 description = "A program for getting the derivative of a function at an exact coordinate using dual numbers"
