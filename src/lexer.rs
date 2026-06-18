@@ -1,6 +1,6 @@
 use crate::{dual::DualComp, error::Error};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Token<T: DualComp> {
     Number(T),
 
@@ -9,8 +9,8 @@ pub enum Token<T: DualComp> {
     Mul,
     Div,
 
-    LBracket,
-    RBracket,
+    LParen,
+    RParen,
 
     X,
 }
@@ -50,8 +50,8 @@ impl Lexer {
             '-' => Ok(Token::Sub),
             '*' => Ok(Token::Mul),
             '/' => Ok(Token::Div),
-            '(' => Ok(Token::LBracket),
-            ')' => Ok(Token::RBracket),
+            '(' => Ok(Token::LParen),
+            ')' => Ok(Token::RParen),
             'x' => Ok(Token::X),
 
             c if c.is_numeric() => {

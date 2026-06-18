@@ -1,6 +1,6 @@
 use std::io::stdin;
 
-use crate::{dual::Dual, lexer::Lexer};
+use crate::{lexer::Lexer, parser::Parser};
 
 mod dual;
 mod lexer;
@@ -18,7 +18,17 @@ fn main() {
             return;
         },
     };
-    println!("{:?}", tokens)
+    println!("{:?}", tokens);
+
+    let mut parser = Parser::new(tokens);
+    let expr = match parser.parse() {
+        Ok(e) => e,
+        Err(e) => {
+            println!("{}", e);
+            return;
+        },
+    };
+    println!("{:?}", expr);
 }
 
 fn get_input() -> String {

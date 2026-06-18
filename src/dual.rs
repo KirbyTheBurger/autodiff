@@ -2,6 +2,7 @@ use std::{fmt::Display, ops::{Add, Div, Mul, Sub}, str::FromStr};
 
 use num::Float;
 
+#[derive(Debug)]
 pub struct Dual<T: Float> {
     real: T,
     dual: T,
