@@ -1,11 +1,12 @@
 use std::io::stdin;
 
-use crate::{lexer::Lexer, parser::Parser};
+use crate::{evaluator::Evaluator, lexer::Lexer, parser::Parser};
 
 mod dual;
 mod lexer;
 mod error;
 mod parser;
+mod evaluator;
 
 fn main() {
     let input = get_input();
@@ -29,6 +30,21 @@ fn main() {
         },
     };
     println!("{:?}", expr);
+
+    let pos;
+    loop {
+        match get_input().parse::<f64>() {
+            Ok(n) => {
+                pos = n;
+                break;
+            },
+            Err(e) => println!("failed to parse number: {e}"),
+        }
+    }
+
+    let eval = Evaluator::new(pos);
+    let result = eval.evaluate(expr);
+    println!("Derivative at x = {}, y = {} is {}", pos, result.real, result.dual);
 }
 
 fn get_input() -> String {

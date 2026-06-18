@@ -1,11 +1,11 @@
-use std::{fmt::Display, ops::{Add, Div, Mul, Sub}, str::FromStr};
+use std::{fmt::Display, ops::{Add, Div, Mul, Neg, Sub}, str::FromStr};
 
 use num::Float;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Dual<T: Float> {
-    real: T,
-    dual: T,
+    pub real: T,
+    pub dual: T,
 }
 
 pub trait DualComp: Float + Default + Display + FromStr {}
@@ -64,7 +64,17 @@ impl<T: DualComp> Div for Dual<T> {
     fn div(self, rhs: Self) -> Self::Output {
         Dual {
             real: self.real / rhs.real,
-            dual: (self.dual * rhs.real - self.real * rhs.dual) / (rhs.dual * rhs.dual),
+            dual: (self.dual * rhs.real - self.real * rhs.dual) / (rhs.real * rhs.real),
+        }
+    }
+}
+
+impl<T: DualComp> Neg for Dual<T> {
+    type Output = Dual<T>;
+    fn neg(self) -> Self::Output {
+        Dual {
+            real: -self.real,
+            dual: -self.dual,
         }
     }
 }
